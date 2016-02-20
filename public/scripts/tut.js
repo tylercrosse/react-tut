@@ -1,15 +1,6 @@
+// bootstraped from https://facebook.github.io/react/docs/tutorial.html
 // NOTE ES6 allows multiline strings
 // stucture -Box > (List > comment) + Form
-
-var data = [{
-  id: 1,
-  author: "Pete Hunt",
-  text: "This is one comment"
-}, {
-  id: 2,
-  author: "Jordan Walke",
-  text: "This is *another* comment WHoa!"
-}];
 
 var CommentBox = React.createClass({
   loadCommentsFromServer: function() {
@@ -25,6 +16,25 @@ var CommentBox = React.createClass({
       }.bind(this)
     });
   },
+  handleCommentSubmit: function(comment) {
+    var comments = this.state.data;
+    comment.id = Date.now();
+    var newComments = comments.concat([comment]);
+    this.setState({data: newComments});
+    $.ajax({
+      url: this.props.url,
+      dataType: 'json',
+      type: 'POST',
+      data: comment,
+      success: function(data) {
+        this.setState({data: data});
+      }.bind(this),
+      error: function(xhr, status, err) {
+        this.setState({data: comments});
+        console.log(this.props.url, status, err.toString());
+      }.bind(this)
+    });
+  },
   getInitialState: function() {
     return {data: []};
   },
@@ -37,7 +47,7 @@ var CommentBox = React.createClass({
       <div className="commentBox">
         <h1>Comments</h1>
         <CommentList data={this.state.data} />
-        <CommentForm />
+        <CommentForm onCommentSubmit={this.handleCommentSubmit}/>
       </div>
     );
   }
@@ -80,11 +90,40 @@ var Comment = React.createClass({
 });
 
 var CommentForm = React.createClass({
+  getInitialState: function() {
+    return {author: '', text: ''};
+  },
+  handleAuthorChange: function(e) {
+    this.setState({author: e.target.value});
+  },
+  handleTextChange: function(e) {
+    this.setState({text: e.target.value});
+  },
+  handleSubmit: function(e) {
+    e.preventDefault();
+    var author = this.state.author.trim(); // $.trim() removes whtspce from beg/end strings
+    var text = this.state.text.trim();
+    if (!text ||!author) {
+      return;
+    }
+    this.props.onCommentSubmit({author: author, text: text});
+    this.setState({author: '', text: ''}); // clears fields on submit
+  },
   render: function() {
     return (
-      <form action="" className="commentForm">
-        <input type="text" placeholder="Yo Name!"/>
-        <input type="text" placeholder="Say something.."/>
+      <form className="commentForm" onSubmit={this.handleSubmit}>
+        <input
+          type="text"
+          placeholder="Yo Name!"
+          value={this.state.author}
+          onChange={this.handleAuthorChange}
+        />
+        <input
+          type="text"
+          placeholder="Say something.."
+          value={this.state.text}
+          onChange={this.handleTextChange}
+        />
         <input type="submit" value="post"/>
       </form>
     );
