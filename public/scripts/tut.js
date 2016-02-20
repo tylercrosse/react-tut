@@ -8,12 +8,12 @@ var CommentBox = React.createClass({
       url: this.props.url,
       dataType: 'json',
       cache: false,
-      success: function(data) {
+      success: (data) => {
         this.setState({data: data});
-      }.bind(this),
-      error: function(xhr, status, err) {
+      },
+      error: (xhr, status, err) => {
         console.error(this.props.url, status, err.toString());
-      }.bind(this)
+      }
     });
   },
   handleCommentSubmit: function(comment) {
@@ -26,13 +26,13 @@ var CommentBox = React.createClass({
       dataType: 'json',
       type: 'POST',
       data: comment,
-      success: function(data) {
+      success: (data) => {
         this.setState({data: data});
-      }.bind(this),
-      error: function(xhr, status, err) {
+      },
+      error: (xhr, status, err) => {
         this.setState({data: comments});
         console.log(this.props.url, status, err.toString());
-      }.bind(this)
+      }
     });
   },
   getInitialState: function() {
