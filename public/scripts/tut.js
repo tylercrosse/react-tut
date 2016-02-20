@@ -1,5 +1,5 @@
 // bootstraped from https://facebook.github.io/react/docs/tutorial.html
-// NOTE ES6 allows multiline strings
+// NOTE using ES6 - multiline strings, arrows
 // stucture -Box > (List > comment) + Form
 
 var CommentBox = React.createClass({
