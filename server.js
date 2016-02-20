@@ -17,6 +17,7 @@ app.use(function(req, res, next) {
   res.setHeader('Access-Control-Allow-Origin', '*'); // allow CORS
 
   res.setHeader('Cache-Control', 'no-cache'); // disable caching
+  next();
 });
 
 //**** Routes ****//
@@ -26,6 +27,7 @@ app.get('/api/comments', function(req, res) {
       console.error(err);
       process.exit(1); //end process w/ failure code 1
     }
+    res.json(JSON.parse(data));
   });
 });
 
